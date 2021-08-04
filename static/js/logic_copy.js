@@ -41,7 +41,7 @@ for (var i = 0; i < earthquake.length; i++) {
       color: "black",
       fillColor: getColor(earthquake[i].geometry.coordinates[2]),
       weight: .5,
-      radius: markerSize(parseInt(earthquake[i].properties.mag))
+      radius: 10000
     }).bindPopup(`<h3>${earthquake[i].properties.title}</h3> <hr>
     <h3> Magnitude: ${earthquake[i].properties.mag} </h3>
     <h3> Depth: ${earthquake[i].geometry.coordinates[2]} </h3>`)
