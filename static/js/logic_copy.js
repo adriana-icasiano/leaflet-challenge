@@ -5,13 +5,13 @@ function markerSize(magnitude) {
 
 // A function to determine the marker size based on the magnitude
 function getColor(depth) {
-  return (depth) > 90 ? rgb(232,0,0): //red
-         (depth) <= 90 && (depth) > 70 ? rgb(255, 98, 0): //dark orange
-         (depth) <= 70 && (depth) > 50? rgb(255, 142, 0): // light orange
-         (depth) <= 50 && (depth) > 30 ? rgb(255, 181, 0): //orange
-         (depth) <= 30 && (depth) >= 10 ? rgb(255, 235, 0): //yellow
-         (depth) < 10 ? rgb(0, 235, 0): //light green
-         rgb(0, 235, 0); //light
+  return (depth) > 90 ? "rgb(232,0,0)": //red
+         (depth) <= 90 && (depth) > 70 ? "rgb(255, 98, 0)": //dark orange
+         (depth) <= 70 && (depth) > 50? "rgb(255, 142, 0)": // light orange
+         (depth) <= 50 && (depth) > 30 ? "rgb(255, 181, 0)": //orange
+         (depth) <= 30 && (depth) >= 10 ? "rgb(255, 255, 0)": //yellow
+         (depth) < 10 ? "rgb(0, 235, 0)": //light green
+         "rgb(0, 235, 0)"; //light green
 }
 
 // Store our API endpoint as queryUrl.
