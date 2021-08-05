@@ -1,3 +1,10 @@
+function getRadius(magnitude_rad) {
+  if (magnitude_rad === 0) {
+    return 1;
+    }
+  return magnitude_rad *30000;
+  }
+
 // A function to determine the marker size based on the magnitude
 function markerSize(magnitude) {
   return Math.sqrt(magnitude) * 30000;
@@ -31,17 +38,18 @@ var earthquakeMarkers = [];
 // Loop through locations, and create the earthquake markers.
 for (var i = 0; i < earthquake.length; i++) {
   // Setting the marker radius for the state by passing magnitude into the markerSize function
-  // console.log(earthquake[i].properties.mag);
+  magnitude_rad = earthquake[i].properties.mag;
   
+
   earthquakeMarkers.push(
     L.circle([earthquake[i].geometry.coordinates[1], earthquake[i].geometry.coordinates[0]], {
       stroke: false,
       fillOpacity: 0.75,
-      stroke: true,
+      stroke: true,                                                                                                                                                                                                                                    
       color: "black",
       fillColor: getColor(earthquake[i].geometry.coordinates[2]),
       weight: .5,
-      radius: markerSize(parseInt(earthquake[i].properties.mag))
+      radius: getRadius(magnitude_rad),
     }).bindPopup(`<h3>${earthquake[i].properties.title}</h3> <hr>
     <h3> Magnitude: ${earthquake[i].properties.mag} </h3>
     <h3> Depth: ${earthquake[i].geometry.coordinates[2]} </h3>`)
