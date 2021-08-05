@@ -75,11 +75,11 @@ var baseMaps = {
   "Topographic Map": topo
 };
 
-// Create an overlay object.
-var overlayMaps = {
-  "Earthquakes": earthquakes,
+// // Create an overlay object.
+// var overlayMaps = {
+//   "Earthquakes": earthquakes,
 
-};
+// };
 
 // Define a map object.
 var myMap = L.map("map", {
@@ -90,11 +90,74 @@ var myMap = L.map("map", {
 
 // Pass our map layers to our layer control.
 // Add the layer control to the map.
+// L.control.layers(baseMaps, overlayMaps, {
+//   collapsed: false
+// }).addTo(myMap);
+
+
+let Url = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json"
+
+// Perform a GET request to the query URL/
+d3.json(Url).then(function (response) {
+
+  console.log(response);
+
+  let tectonicGeo = response.features[1].geometry.coordinates; 
+  
+  console.log(tectonicGeo);
+  
+// Define arrays to hold the created earthquake markers.
+var plateMarkers = [];
+
+
+// Loop through locations, and create the earthquake markers.
+for (var i = 0; i < tectonicGeo.length; i++) {
+  // Setting the marker radius for the state by passing magnitude into the markerSize function
+  console.log(tectonicGeo[i]);
+
+  plateMarkers.push([tectonicGeo[i][1],tectonicGeo[i][0]]);
+  console.log(plateMarkers);
+
+  L.polygon(plateMarkers, {
+      fillOpacity: 0.75,
+      color: "black",
+      fillColor: "yellow",
+      weight: 2,
+      
+    })
+  // );
+
+
+
+  // plateMarkers.push(
+  //   L.polygon([tectonicGeo[i][1],tectonicGeo[i][0]], {
+  //     fillOpacity: 0.75,
+  //     color: "black",
+  //     fillColor: "yellow",
+  //     weight: 2,
+      
+  //   })
+  // );
+
+}
+
+// Create two separate layer groups: one for the earthquake markers.
+var plate = L.layerGroup(plateMarkers);
+
+var overlayMaps = {
+  "Earthquakes": earthquakes,
+  "Tectonic Plates": plate,
+
+};
+
 L.control.layers(baseMaps, overlayMaps, {
   collapsed: false
 }).addTo(myMap);
 
 
+});
+
+//Create legend for depth of earthquakes
 var legend = L.control({position: 'bottomright'});
 
 legend.onAdd = function (map) {
@@ -116,6 +179,10 @@ legend.onAdd = function (map) {
 legend.addTo(myMap);
 
 
+
+
+
 });
 
-  
+
+
