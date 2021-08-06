@@ -95,37 +95,57 @@ var myMap = L.map("map", {
 // }).addTo(myMap);
 
 
-let Url = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json"
+let Url = "https://github.com/fraxen/tectonicplates/blob/master/GeoJSON/PB2002_boundaries.json"
 
 // Perform a GET request to the query URL/
 d3.json(Url).then(function (response) {
 
   console.log(response);
 
-  let tectonicGeo = response.features[1].geometry.coordinates; 
+  let tectonicGeo = response.features[1].geometry.coordinates[0]; 
   
   console.log(tectonicGeo);
   
 // Define arrays to hold the created earthquake markers.
 var plateMarkers = [];
 
+for (var i = 0; i < tectonicGeo.length; i++) {
+
+  plateMarkers.push([tectonicGeo[i][1],tectonicGeo[i][0]])
+}
+
+  console.log(plateMarkers);
+// plate = L.polygon(tectonicGeo[0], {
+//   fillOpacity: 0.75,
+//       color: "black",
+//       fillColor: "yellow",
+//       weight: 2,
+      
+//     });
+
+let plate = L.polyline(plateMarkers, {
+  fillOpacity: 0.75,
+      color: "yellow",
+       weight: 2,
+      
+    }).addTo(myMap);
 
 // Loop through locations, and create the earthquake markers.
-for (var i = 0; i < tectonicGeo.length; i++) {
-  // Setting the marker radius for the state by passing magnitude into the markerSize function
-  console.log(tectonicGeo[i]);
+// for (var i = 0; i < tectonicGeo.length; i++) {
+//   // Setting the marker radius for the state by passing magnitude into the markerSize function
+//   console.log(tectonicGeo[i]);
 
-  plateMarkers.push([tectonicGeo[i][1],tectonicGeo[i][0]]);
-  console.log(plateMarkers);
+//   // plateMarkers.push([tectonicGeo[i][1],tectonicGeo[i][0]]);
+//   // console.log(plateMarkers);
 
-  L.polygon(plateMarkers, {
-      fillOpacity: 0.75,
-      color: "black",
-      fillColor: "yellow",
-      weight: 2,
+//   L.polygon(plateMarkers, {
+//       fillOpacity: 0.75,
+//       color: "black",
+//       fillColor: "yellow",
+//       weight: 2,
       
-    })
-  // );
+//     });
+  // ); // close parenthesis for platMarker.push method
 
 
 
@@ -139,14 +159,14 @@ for (var i = 0; i < tectonicGeo.length; i++) {
   //   })
   // );
 
-}
+// }
 
 // Create two separate layer groups: one for the earthquake markers.
-var plate = L.layerGroup(plateMarkers);
+var plateLayer = L.layerGroup(plate);
 
 var overlayMaps = {
   "Earthquakes": earthquakes,
-  "Tectonic Plates": plate,
+  "Tectonic Plates": plateLayer,
 
 };
 
