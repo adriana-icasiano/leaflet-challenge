@@ -95,78 +95,62 @@ var myMap = L.map("map", {
 // }).addTo(myMap);
 
 
-let Url = "https://github.com/fraxen/tectonicplates/blob/master/GeoJSON/PB2002_boundaries.json"
+let Url = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json"
 
 // Perform a GET request to the query URL/
 d3.json(Url).then(function (response) {
 
   console.log(response);
 
-  let tectonicGeo = response.features[1].geometry.coordinates[0]; 
+  let tectonicGeo = response.features; 
   
   console.log(tectonicGeo);
   
 // Define arrays to hold the created earthquake markers.
 var plateMarkers = [];
+var plateCoordArray = [];
+var plateCoordRev = [];
 
 for (var i = 0; i < tectonicGeo.length; i++) {
 
-  plateMarkers.push([tectonicGeo[i][1],tectonicGeo[i][0]])
+  plateMarkers.push(tectonicGeo[i].geometry.coordinates)
 }
 
-  console.log(plateMarkers);
-// plate = L.polygon(tectonicGeo[0], {
-//   fillOpacity: 0.75,
-//       color: "black",
-//       fillColor: "yellow",
-//       weight: 2,
-      
-//     });
+for (var i = 0; i < plateMarkers.length; i++) {
 
-let plate = L.polyline(plateMarkers, {
+  plateCoordArray.push(plateMarkers[i])
+}
+
+for (var i = 0; i < plateMarkers.length; i++) {
+//  console.log(plateCoordArray[i]);
+
+  for (var x = 0; x < plateMarkers[i].length; x++) {
+    plateCoordRev.push([plateCoordArray[i][1], plateCoordArray[i][0]])
+}
+}
+
+
+
+console.log(plateMarkers);
+console.log(plateCoordArray);
+console.log(plateCoordRev);
+
+
+
+L.polyline(plateCoordArray, {
   fillOpacity: 0.75,
       color: "yellow",
        weight: 2,
       
     }).addTo(myMap);
 
-// Loop through locations, and create the earthquake markers.
-// for (var i = 0; i < tectonicGeo.length; i++) {
-//   // Setting the marker radius for the state by passing magnitude into the markerSize function
-//   console.log(tectonicGeo[i]);
-
-//   // plateMarkers.push([tectonicGeo[i][1],tectonicGeo[i][0]]);
-//   // console.log(plateMarkers);
-
-//   L.polygon(plateMarkers, {
-//       fillOpacity: 0.75,
-//       color: "black",
-//       fillColor: "yellow",
-//       weight: 2,
-      
-//     });
-  // ); // close parenthesis for platMarker.push method
-
-
-
-  // plateMarkers.push(
-  //   L.polygon([tectonicGeo[i][1],tectonicGeo[i][0]], {
-  //     fillOpacity: 0.75,
-  //     color: "black",
-  //     fillColor: "yellow",
-  //     weight: 2,
-      
-  //   })
-  // );
-
-// }
 
 // Create two separate layer groups: one for the earthquake markers.
-var plateLayer = L.layerGroup(plate);
+// var plateLayer = L.layerGroup(plate);
 
 var overlayMaps = {
   "Earthquakes": earthquakes,
-  "Tectonic Plates": plateLayer,
+  // "Tectonic Plates": plateLayer,
 
 };
 
