@@ -66,13 +66,15 @@ d3.json(queryUrl).then(function (data) {
     attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
   });
 
+  console.log(API_KEY);
+  
   var graymap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
   attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
   tileSize: 512,
   maxZoom: 18,
   zoomOffset: -1,
   id: "mapbox/light-v10",
-  accessToken: "API_KEY"
+  accessToken: API_KEY
 });
 
 var satellitemap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -81,7 +83,7 @@ var satellitemap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/
   maxZoom: 18,
   zoomOffset: -1,
   id: "mapbox/satellite-v9",
-  accessToken: "API_KEY"
+  accessToken: API_KEY
 });
 
 var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -90,7 +92,7 @@ var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
   maxZoom: 18,
   zoomOffset: -1,
   id: "mapbox/outdoors-v11",
-  accessToken: "API_KEY"
+  accessToken: API_KEY
 });
 
 
@@ -109,26 +111,15 @@ var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
     
   };
 
-  // // Create an overlay object.
-  // var overlayMaps = {
-  //   "Earthquakes": earthquakes,
-
-  // };
-
-  // Define a map object.
+   // Define a map object.
   var myMap = L.map("map", {
     center: [37.09, -95.71],
-    zoom: 5,
+    zoom: 2,
     layers: [street, earthquakes]
   });
 
-  // Pass our map layers to our layer control.
-  // Add the layer control to the map.
-  // L.control.layers(baseMaps, overlayMaps, {
-  //   collapsed: false
-  // }).addTo(myMap);
 
-
+  // Create overlay for tectonic plates
   let Url = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json"
 
   // Perform a GET request to the query URL/
@@ -142,9 +133,7 @@ var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
 
     // Define arrays to hold the created earthquake markers.
     var plateMarkers = [];
-    var plateCoordRev = [];
-    var plateArray = [];
-
+    
     for (var i = 0; i < tectonicGeo.length; i++) {
 
       coordArray = [];
@@ -157,7 +146,7 @@ var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
     }
 
 
-    // Create two separate layer groups: one for the earthquake markers.
+    // Create empty layer for the tectonic plates.
     var plateLayer = new L.layerGroup();
 
     L.polyline(plateMarkers, {
