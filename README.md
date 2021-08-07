@@ -41,4 +41,4 @@ In this step, you will:
 - - -
 
 ### Final App Image
-[Sample of Website](https://github.com/adriana-icasiano/leaflet-challenge/blob/main/images/final_app_view.PNG)
+![Sample of Website](https://github.com/adriana-icasiano/leaflet-challenge/blob/main/images/final_app_view.PNG)
