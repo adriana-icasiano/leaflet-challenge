@@ -1,9 +1,9 @@
 function getRadius(magnitude_rad) {
   if (magnitude_rad === 0) {
     return 1;
-    }
-  return magnitude_rad *30000;
   }
+  return magnitude_rad * 30000;
+}
 
 // A function to determine the marker size based on the magnitude
 function markerSize(magnitude) {
@@ -12,13 +12,13 @@ function markerSize(magnitude) {
 
 // A function to determine the marker size based on the magnitude
 function getColor(depth) {
-  return (depth) > 90 ? "rgb(232,0,0)": //red
-         (depth) <= 90 && (depth) > 70 ? "rgb(255, 98, 0)": //dark orange
-         (depth) <= 70 && (depth) > 50? "rgb(255, 142, 0)": // light orange
-         (depth) <= 50 && (depth) > 30 ? "rgb(255, 181, 0)": //orange
-         (depth) <= 30 && (depth) >= 10 ? "rgb(255, 255, 0)": //yellow
-         (depth) < 10 ? "rgb(0, 235, 0)": //light green
-         "rgb(0, 235, 0)"; //light green
+  return (depth) > 90 ? "rgb(232,0,0)" : //red
+    (depth) <= 90 && (depth) > 70 ? "rgb(255, 98, 0)" : //dark orange
+      (depth) <= 70 && (depth) > 50 ? "rgb(255, 142, 0)" : // light orange
+        (depth) <= 50 && (depth) > 30 ? "rgb(255, 181, 0)" : //orange
+          (depth) <= 30 && (depth) >= 10 ? "rgb(255, 255, 0)" : //yellow
+            (depth) < 10 ? "rgb(0, 235, 0)" : //light green
+              "rgb(0, 235, 0)"; //light green
 }
 
 // Store our API endpoint as queryUrl.
@@ -27,160 +27,179 @@ let queryUrl = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_we
 // Perform a GET request to the query URL/
 d3.json(queryUrl).then(function (data) {
 
-  let earthquake = data.features; 
-  
+  let earthquake = data.features;
+
   console.log(earthquake);
-  
-// Define arrays to hold the created earthquake markers.
-var earthquakeMarkers = [];
+
+  // Define arrays to hold the created earthquake markers.
+  var earthquakeMarkers = [];
 
 
-// Loop through locations, and create the earthquake markers.
-for (var i = 0; i < earthquake.length; i++) {
-  // Setting the marker radius for the state by passing magnitude into the markerSize function
-  magnitude_rad = earthquake[i].properties.mag;
-  
+  // Loop through locations, and create the earthquake markers.
+  for (var i = 0; i < earthquake.length; i++) {
+    // Setting the marker radius for the state by passing magnitude into the markerSize function
+    magnitude_rad = earthquake[i].properties.mag;
 
-  earthquakeMarkers.push(
-    L.circle([earthquake[i].geometry.coordinates[1], earthquake[i].geometry.coordinates[0]], {
-      stroke: false,
-      fillOpacity: 0.75,
-      stroke: true,                                                                                                                                                                                                                                    
-      color: "black",
-      fillColor: getColor(earthquake[i].geometry.coordinates[2]),
-      weight: .5,
-      radius: getRadius(magnitude_rad),
-    }).bindPopup(`<h3>${earthquake[i].properties.title}</h3> <hr>
+
+    earthquakeMarkers.push(
+      L.circle([earthquake[i].geometry.coordinates[1], earthquake[i].geometry.coordinates[0]], {
+        stroke: false,
+        fillOpacity: 0.75,
+        stroke: true,
+        color: "black",
+        fillColor: getColor(earthquake[i].geometry.coordinates[2]),
+        weight: .5,
+        radius: getRadius(magnitude_rad),
+      }).bindPopup(`<h3>${earthquake[i].properties.title}</h3> <hr>
     <h3> Magnitude: ${earthquake[i].properties.mag} </h3>
     <h3> Depth: ${earthquake[i].geometry.coordinates[2]} </h3>`)
-  );
+    );
 
-}
+  }
 
-// Create the base layers.
-var street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  // Create the base layers.
+  var street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-})
+  })
 
-var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+  var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+  });
+
+  var graymap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+  attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+  tileSize: 512,
+  maxZoom: 18,
+  zoomOffset: -1,
+  id: "mapbox/light-v10",
+  accessToken: "pk.eyJ1IjoiYWRyaWFuYS1pY2FzaWFubyIsImEiOiJja3IwMGtoMzIwMmw3MnFueWZvanhqZjFwIn0.T0vr_9fM6DxXNTW6RpdhqA"
 });
 
-// Create two separate layer groups: one for the earthquake markers.
-var earthquakes = L.layerGroup(earthquakeMarkers);
-
-// Create a baseMaps object.
-var baseMaps = {
-  "Street Map": street,
-  "Topographic Map": topo
-};
-
-// // Create an overlay object.
-// var overlayMaps = {
-//   "Earthquakes": earthquakes,
-
-// };
-
-// Define a map object.
-var myMap = L.map("map", {
-  center: [37.09, -95.71],
-  zoom: 5,
-  layers: [street, earthquakes]
+var satellitemap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+  attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+  tileSize: 512,
+  maxZoom: 18,
+  zoomOffset: -1,
+  id: "mapbox/satellite-v9",
+  accessToken: "pk.eyJ1IjoiYWRyaWFuYS1pY2FzaWFubyIsImEiOiJja3IwMGtoMzIwMmw3MnFueWZvanhqZjFwIn0.T0vr_9fM6DxXNTW6RpdhqA"
 });
 
-// Pass our map layers to our layer control.
-// Add the layer control to the map.
-// L.control.layers(baseMaps, overlayMaps, {
-//   collapsed: false
-// }).addTo(myMap);
-
-
-let Url = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json"
-
-// Perform a GET request to the query URL/
-d3.json(Url).then(function (response) {
-
-  console.log(response);
-
-  let tectonicGeo = response.features; 
-  
-  console.log(tectonicGeo);
-  
-// Define arrays to hold the created earthquake markers.
-var plateMarkers = [];
-var plateCoordArray = [];
-var plateCoordRev = [];
-
-for (var i = 0; i < tectonicGeo.length; i++) {
-
-  plateMarkers.push(tectonicGeo[i].geometry.coordinates)
-}
-
-for (var i = 0; i < plateMarkers.length; i++) {
-
-  plateCoordArray.push(plateMarkers[i])
-}
-
-for (var i = 0; i < plateMarkers.length; i++) {
-//  console.log(plateCoordArray[i]);
-
-  for (var x = 0; x < plateMarkers[i].length; x++) {
-    plateCoordRev.push([plateCoordArray[i][1], plateCoordArray[i][0]])
-}
-}
+var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+  attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+  tileSize: 512,
+  maxZoom: 18,
+  zoomOffset: -1,
+  id: "mapbox/outdoors-v11",
+  accessToken: "pk.eyJ1IjoiYWRyaWFuYS1pY2FzaWFubyIsImEiOiJja3IwMGtoMzIwMmw3MnFueWZvanhqZjFwIn0.T0vr_9fM6DxXNTW6RpdhqA"
+});
 
 
 
-console.log(plateMarkers);
-console.log(plateCoordArray);
-console.log(plateCoordRev);
+
+  // Create two separate layer groups: one for the earthquake markers.
+  var earthquakes = L.layerGroup(earthquakeMarkers);
+
+  // Create a baseMaps object.
+  var baseMaps = {
+    "Satellite": satellitemap,
+    "Street Map": street,
+    "Topographic Map": topo,
+    "Grayscale": graymap,
+    "Outdoors": outdoors
+    
+  };
+
+  // // Create an overlay object.
+  // var overlayMaps = {
+  //   "Earthquakes": earthquakes,
+
+  // };
+
+  // Define a map object.
+  var myMap = L.map("map", {
+    center: [37.09, -95.71],
+    zoom: 2,
+    layers: [satellitemap, earthquakes]
+  });
+
+  // Pass our map layers to our layer control.
+  // Add the layer control to the map.
+  // L.control.layers(baseMaps, overlayMaps, {
+  //   collapsed: false
+  // }).addTo(myMap);
 
 
+  let Url = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json"
 
-L.polyline(plateCoordArray, {
-  fillOpacity: 0.75,
-      color: "yellow",
-       weight: 2,
+  // Perform a GET request to the query URL/
+  d3.json(Url).then(function (response) {
+
+    console.log(response);
+
+    let tectonicGeo = response.features;
+
+    console.log(tectonicGeo);
+
+    // Define arrays to hold the created earthquake markers.
+    var plateMarkers = [];
+    var plateCoordRev = [];
+    var plateArray = [];
+
+    for (var i = 0; i < tectonicGeo.length; i++) {
+
+      coordArray = [];
       
+      tectonicGeo[i].geometry.coordinates.forEach((coordinate) => {
+        coordArray.push(coordinate.reverse());
+      })
+
+    plateMarkers.push(coordArray);  
+    }
+
+
+    // Create two separate layer groups: one for the earthquake markers.
+    var plateLayer = new L.layerGroup();
+
+    L.polyline(plateMarkers, {
+      fillOpacity: 0.75,
+      color: "yellow",
+      weight: 2,
+
+    }).addTo(plateLayer);
+
+    var overlayMaps = {
+      "Earthquakes": earthquakes,
+      "Tectonic Plates": plateLayer,
+
+    };
+
+    L.control.layers(baseMaps, overlayMaps, {
+      collapsed: false
     }).addTo(myMap);
 
 
-// Create two separate layer groups: one for the earthquake markers.
-// var plateLayer = L.layerGroup(plate);
+  });
 
-var overlayMaps = {
-  "Earthquakes": earthquakes,
-  // "Tectonic Plates": plateLayer,
+  //Create legend for depth of earthquakes
+  var legend = L.control({ position: 'bottomright' });
 
-};
-
-L.control.layers(baseMaps, overlayMaps, {
-  collapsed: false
-}).addTo(myMap);
-
-
-});
-
-//Create legend for depth of earthquakes
-var legend = L.control({position: 'bottomright'});
-
-legend.onAdd = function (map) {
+  legend.onAdd = function (map) {
 
     var div = L.DomUtil.create('div', 'info legend'),
-        depthOfQuake = [0, 10, 30, 50, 70, 90],
-        labels = [];
+      depthOfQuake = [0, 10, 30, 50, 70, 90],
+      labels = [];
 
     // loop through our density intervals and generate a label with a colored square for each interval
     for (var i = 0; i < depthOfQuake.length; i++) {
-        div.innerHTML +=
-            '<i style="background:' + getColor(depthOfQuake[i] + 1) + '"></i> ' +
-            depthOfQuake[i] + (depthOfQuake[i + 1] ? '&ndash;' + depthOfQuake[i + 1] + '<br><br>' : '+');
+      div.innerHTML +=
+        '<i style="background:' + getColor(depthOfQuake[i] + 1) + '"></i> ' +
+        depthOfQuake[i] + (depthOfQuake[i + 1] ? '&ndash;' + depthOfQuake[i + 1] + '<br><br>' : '+');
     }
 
     return div;
-};
+  };
 
-legend.addTo(myMap);
+  legend.addTo(myMap);
 
 
 
