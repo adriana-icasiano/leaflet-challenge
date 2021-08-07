@@ -72,7 +72,7 @@ d3.json(queryUrl).then(function (data) {
   maxZoom: 18,
   zoomOffset: -1,
   id: "mapbox/light-v10",
-  accessToken: "pk.eyJ1IjoiYWRyaWFuYS1pY2FzaWFubyIsImEiOiJja3IwMGtoMzIwMmw3MnFueWZvanhqZjFwIn0.T0vr_9fM6DxXNTW6RpdhqA"
+  accessToken: "API_KEY"
 });
 
 var satellitemap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -81,7 +81,7 @@ var satellitemap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/
   maxZoom: 18,
   zoomOffset: -1,
   id: "mapbox/satellite-v9",
-  accessToken: "pk.eyJ1IjoiYWRyaWFuYS1pY2FzaWFubyIsImEiOiJja3IwMGtoMzIwMmw3MnFueWZvanhqZjFwIn0.T0vr_9fM6DxXNTW6RpdhqA"
+  accessToken: "API_KEY"
 });
 
 var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -90,7 +90,7 @@ var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
   maxZoom: 18,
   zoomOffset: -1,
   id: "mapbox/outdoors-v11",
-  accessToken: "pk.eyJ1IjoiYWRyaWFuYS1pY2FzaWFubyIsImEiOiJja3IwMGtoMzIwMmw3MnFueWZvanhqZjFwIn0.T0vr_9fM6DxXNTW6RpdhqA"
+  accessToken: "API_KEY"
 });
 
 
@@ -118,8 +118,8 @@ var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/
   // Define a map object.
   var myMap = L.map("map", {
     center: [37.09, -95.71],
-    zoom: 2,
-    layers: [satellitemap, earthquakes]
+    zoom: 5,
+    layers: [street, earthquakes]
   });
 
   // Pass our map layers to our layer control.
